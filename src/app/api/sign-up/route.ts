@@ -63,12 +63,13 @@ export async function POST(req: Request) {
     }
 
     // send verification email
-    const emailResponse = await sendVerificationEmail(
+    const emailResponse = await sendVerificationEmail({
       email,
       username,
-      verifyCode
-    );
-    console.log(emailResponse);
+      verifyCode,
+    });
+    console.log("response", emailResponse);
+
     if (!emailResponse.success) {
       return Response.json(
         {
