@@ -12,7 +12,6 @@ export async function GET(request: Request) {
     // session of login user
     const session = await getServerSession(authOptions)
     const user: User = session?.user as User
-
     if (!session || !session.user) {
         return Response.json({
             success: false,
@@ -28,11 +27,10 @@ export async function GET(request: Request) {
     try {
         const user = await UserModel.aggregate([
             { $match: { _id: userId } }, // match the id with current user id
-            { $unwind: 'messages' },
+            { $unwind: '$messages' },
             { $sort: { 'messages.createdAt': -1 } },
             { $group: { _id: '$_id', messages: { $push: '$messages' } } }
         ])
-        console.log(user)
         if (!user || user.length === 0) {
             return Response.json({
                 success: false,

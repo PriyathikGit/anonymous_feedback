@@ -19,13 +19,13 @@ export async function POST(request: Request) {
     }
     const userId = user?._id
     const { acceptMessages } = await request.json()
-
     try {
         const updatedUser = await UserModel.findByIdAndUpdate(
             userId,
-            { isAcceptingMessage: acceptMessages },
+            { isAcceptingMessages: acceptMessages },
             { new: true }
         )
+
         if (!updatedUser) {
             return Response.json({
                 success: false,
@@ -54,12 +54,14 @@ export async function GET(request: Request) {
     const session = await getServerSession(authOptions)
     const user: User = session?.user as User
 
+    // if user is not login
     if (!session || !session.user) {
         return Response.json({
             success: false,
             message: "not authenticated"
         }, { status: 401 })
     }
+
     const userId = user?._id
 
     try {
@@ -74,10 +76,11 @@ export async function GET(request: Request) {
 
         return Response.json({
             success: true,
-            isAcceptingMessages: foundUser.isAcceptingMessage
+            isAcceptingMessages: foundUser.isAcceptingMessages
         }, { status: 200 })
+
     } catch (error) {
-        console.log("Error in getting user accepting message status",error)
+        console.log("Error in getting user accepting message status", error)
         return Response.json({
             success: false,
             message: "Error in getting user accepting message status"

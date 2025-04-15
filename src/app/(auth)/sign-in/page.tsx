@@ -15,7 +15,7 @@ import * as z from 'zod';
 
 const page = () => {
   const router = useRouter()
-  const form = useForm<z.infer<typeof SignInSchema>>({ // type of signup schema
+  const form = useForm<z.infer<typeof SignInSchema>>({ // type of signin schema
     resolver: zodResolver(SignInSchema),
     defaultValues: {
       identifier: '',
@@ -27,15 +27,26 @@ const page = () => {
     const result = await signIn('credentials', {
       redirect: false,
       identifier: data.identifier,
-      password: data.password
+      password: data.password,
+      callbackUrl: '/dashboard'
     })
-    console.log(result?.error);
+
     if (result?.error) {
       toast.error('Incorrect username or passowrd')
+      console.log("error", result?.error);
+
     }
-    if (result?.url) {
-      router.replace('/dashboard')
+    if (result?.ok && result.url) {
+      router.replace(result.url); // ✅ now this will point to /dashboard
     }
+
+    // if (result?.ok) {
+    //   toast.success("login succesful...")
+    //   console.log("full result", result)
+
+    //   // router.replace('/dashboard')
+    // }
+    console.log("login flow completed")
   }
 
   return (
